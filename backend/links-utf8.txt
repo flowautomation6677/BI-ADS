@@ -1,0 +1,10 @@
+=== Últimos Relatórios Criados ===
+[1] Cliente: Cliente Teste Seed | Conta: act_1555843605744369
+👉 Link: http://localhost:3000/report/fa0b81ca-0bdc-446d-b7f4-6a1f9316589d
+----------------------------------
+[2] Cliente: Cliente Real (Auto-Detectado) | Conta: act_861347280211294
+👉 Link: http://localhost:3000/report/9fffb133-893d-4735-b37a-6a4b143fe805
+----------------------------------
+[3] Cliente: Cliente Teste Seed | Conta: act_SUA_CONTA_AQUI
+👉 Link: http://localhost:3000/report/4a43c720-932e-4cff-ba58-73197f0dbd9c
+----------------------------------

@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Relatorio {
+  id                     String   @id @default(uuid())
+  id_unico               String   @unique @default(uuid())
+  ad_account_id_facebook String
+  nome_cliente           String
+  kpi_principal          String   @default("ROAS") // ROAS, CPA, CTR
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}

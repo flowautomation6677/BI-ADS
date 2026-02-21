@@ -1,0 +1,96 @@
+{
+  "name": "AD3 - VÍDEO",
+  "status": "ACTIVE",
+  "creative": {
+    "id": "1224395355994393"
+  },
+  "insights": {
+    "data": [
+      {
+        "spend": "42.64",
+        "cpc": "0.907234",
+        "ctr": "3.609831",
+        "clicks": "47",
+        "actions": [
+          {
+            "action_type": "link_click",
+            "value": "30"
+          },
+          {
+            "action_type": "page_engagement",
+            "value": "590"
+          },
+          {
+            "action_type": "landing_page_view",
+            "value": "11"
+          },
+          {
+            "action_type": "omni_landing_page_view",
+            "value": "11"
+          },
+          {
+            "action_type": "onsite_conversion.post_unlike",
+            "value": "1"
+          },
+          {
+            "action_type": "post_engagement",
+            "value": "590"
+          },
+          {
+            "action_type": "comment",
+            "value": "1"
+          },
+          {
+            "action_type": "post_interaction_gross",
+            "value": "21"
+          },
+          {
+            "action_type": "post",
+            "value": "1"
+          },
+          {
+            "action_type": "onsite_conversion.post_save",
+            "value": "1"
+          },
+          {
+            "action_type": "onsite_conversion.post_net_like",
+            "value": "17"
+          },
+          {
+            "action_type": "onsite_conversion.post_net_save",
+            "value": "1"
+          },
+          {
+            "action_type": "onsite_web_lead",
+            "value": "1"
+          },
+          {
+            "action_type": "lead",
+            "value": "1"
+          },
+          {
+            "action_type": "offsite_conversion.fb_pixel_lead",
+            "value": "1"
+          },
+          {
+            "action_type": "video_view",
+            "value": "539"
+          },
+          {
+            "action_type": "post_reaction",
+            "value": "18"
+          }
+        ],
+        "date_start": "2026-02-20",
+        "date_stop": "2026-02-20"
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "before": "MAZDZD",
+        "after": "MAZDZD"
+      }
+    }
+  },
+  "id": "120242980298700346"
+}
