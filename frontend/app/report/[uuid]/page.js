@@ -78,7 +78,8 @@ export default function ReportPage() {
                 if (kpi) query.append('kpi', kpi);
 
                 // Em produção, usar process.env.NEXT_PUBLIC_API_URL
-                const res = await fetch(`http://localhost:3001/api/relatorio/${uuid}?${query.toString()}`);
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+                const res = await fetch(`${apiUrl}/api/relatorio/${uuid}?${query.toString()}`);
                 if (!res.ok) {
                     const errData = await res.json();
                     throw new Error(errData.error || "Erro ao carregar o relatório");
