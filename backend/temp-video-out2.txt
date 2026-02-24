@@ -1,0 +1,10 @@
+--- AD3 - VÍDEO
+15s: 223
+p100: 14
+p50: 82
+
+--- AD1 - ESTÁTICO
+15s: undefined
+p100: undefined
+p50: undefined
+

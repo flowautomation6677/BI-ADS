@@ -1,0 +1,19 @@
+{
+  "name": "AD3 - VÍDEO",
+  "insights": {
+    "data": [
+      {
+        "impressions": "1441",
+        "date_start": "2026-01-22",
+        "date_stop": "2026-02-20"
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "before": "MAZDZD",
+        "after": "MAZDZD"
+      }
+    }
+  },
+  "id": "120242980298700346"
+}

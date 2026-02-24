@@ -1,0 +1,88 @@
+{
+  "name": "AD3 - VÍDEO",
+  "insights": {
+    "data": [
+      {
+        "actions": [
+          {
+            "action_type": "link_click",
+            "value": "33"
+          },
+          {
+            "action_type": "page_engagement",
+            "value": "659"
+          },
+          {
+            "action_type": "landing_page_view",
+            "value": "11"
+          },
+          {
+            "action_type": "omni_landing_page_view",
+            "value": "11"
+          },
+          {
+            "action_type": "onsite_conversion.post_unlike",
+            "value": "1"
+          },
+          {
+            "action_type": "post_engagement",
+            "value": "659"
+          },
+          {
+            "action_type": "comment",
+            "value": "1"
+          },
+          {
+            "action_type": "post_interaction_gross",
+            "value": "22"
+          },
+          {
+            "action_type": "post",
+            "value": "1"
+          },
+          {
+            "action_type": "onsite_conversion.post_save",
+            "value": "1"
+          },
+          {
+            "action_type": "onsite_conversion.post_net_like",
+            "value": "18"
+          },
+          {
+            "action_type": "onsite_conversion.post_net_save",
+            "value": "1"
+          },
+          {
+            "action_type": "onsite_web_lead",
+            "value": "1"
+          },
+          {
+            "action_type": "lead",
+            "value": "1"
+          },
+          {
+            "action_type": "offsite_conversion.fb_pixel_lead",
+            "value": "1"
+          },
+          {
+            "action_type": "video_view",
+            "value": "604"
+          },
+          {
+            "action_type": "post_reaction",
+            "value": "19"
+          }
+        ],
+        "date_start": "2026-01-22",
+        "date_stop": "2026-02-20"
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "before": "MAZDZD",
+        "after": "MAZDZD"
+      }
+    }
+  },
+  "id": "120242980298700346"
+}

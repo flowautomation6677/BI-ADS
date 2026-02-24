@@ -1,0 +1,44 @@
+﻿
+> frontend@0.1.0 lint
+> eslint
+
+
+C:\Users\luiza\OneDrive\Documentos\Antigravity\BI ADS\frontend\components\AdCard.jsx
+  47:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\luiza\OneDrive\Documentos\Antigravity\BI ADS\frontend\components\dashboard\AdSetTable.jsx
+   1:1   warning  Unused eslint-disable directive (no problems were reported from 'react/no-unstable-nested-components')
+  79:8   warning  React Hook useMemo has a missing dependency: 'columnHelper'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+  81:19  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+  79 |     ], []);
+  80 |
+> 81 |     const table = useReactTable({
+     |                   ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  82 |         data: data || [],
+  83 |         columns,
+  84 |         state: { sorting },  react-hooks/incompatible-library
+
+C:\Users\luiza\OneDrive\Documentos\Antigravity\BI ADS\frontend\components\dashboard\CPAHorizontalBar.jsx
+   2:108  error    Definition for rule 'no-deprecated' was not found            no-deprecated
+  50:33   warning  Unused eslint-disable directive (no problems were reported)
+
+C:\Users\luiza\OneDrive\Documentos\Antigravity\BI ADS\frontend\components\dashboard\CampaignTable.jsx
+  68:8   warning  React Hook useMemo has a missing dependency: 'columnHelper'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+  70:19  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+  68 |     ], []);
+  69 |
+> 70 |     const table = useReactTable({
+     |                   ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  71 |         data: data || [],
+  72 |         columns,
+  73 |         state: { sorting },  react-hooks/incompatible-library
+
+Ô£û 8 problems (1 error, 7 warnings)
+  0 errors and 2 warnings potentially fixable with the `--fix` option.
+

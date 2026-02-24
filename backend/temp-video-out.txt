@@ -1,0 +1,15 @@
+--- AD3 - VÍDEO
+Imp: 1439
+3s: 1364
+15s/ThruPlay: undefined
+
+--- AD1 - ESTÁTICO
+Imp: 163
+3s: undefined
+15s/ThruPlay: undefined
+
+--- AD5 - VÍDEO
+Imp: 1028
+3s: 951
+15s/ThruPlay: undefined
+

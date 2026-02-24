@@ -1,0 +1,714 @@
+[
+  {
+    "ad_id": "120242394028670346",
+    "ad_name": "AD1  -- VÍDEO",
+    "impressions": "219",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "199"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "link_click",
+        "value": "6"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "88"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "88"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "lead",
+        "value": "1"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "1"
+      },
+      {
+        "action_type": "video_view",
+        "value": "82"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242394381880346",
+    "ad_name": "AD2 - VÍDEO",
+    "impressions": "50",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "42"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "link_click",
+        "value": "2"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "32"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "32"
+      },
+      {
+        "action_type": "video_view",
+        "value": "30"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242394391130346",
+    "ad_name": "AD3 - VÍDEO",
+    "impressions": "462",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "393"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "4"
+      },
+      {
+        "action_type": "link_click",
+        "value": "31"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "256"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "256"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "5"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "4"
+      },
+      {
+        "action_type": "onsite_conversion.post_save",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "4"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_save",
+        "value": "1"
+      },
+      {
+        "action_type": "lead",
+        "value": "4"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "4"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "4"
+      },
+      {
+        "action_type": "video_view",
+        "value": "220"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "4"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242394550300346",
+    "ad_name": "AD4  - IMAGEM",
+    "impressions": "431",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "1"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "link_click",
+        "value": "9"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "13"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "12"
+      },
+      {
+        "action_type": "like",
+        "value": "1"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "3"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "3"
+      },
+      {
+        "action_type": "lead",
+        "value": "1"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "1"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "3"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242395081280346",
+    "ad_name": "AD5  - IMAGEM",
+    "impressions": "297",
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "link_click",
+        "value": "5"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "6"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "6"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "1"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "1"
+      },
+      {
+        "action_type": "lead",
+        "value": "1"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "1"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "1"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242395117840346",
+    "ad_name": "AD5  - IMAGEM",
+    "impressions": "280",
+    "actions": [
+      {
+        "action_type": "link_click",
+        "value": "3"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "3"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "3"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242395117850346",
+    "ad_name": "AD4  - IMAGEM",
+    "impressions": "1747",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "1"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "9"
+      },
+      {
+        "action_type": "link_click",
+        "value": "50"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "60"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "60"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "9"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "9"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "9"
+      },
+      {
+        "action_type": "lead",
+        "value": "9"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "9"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "9"
+      },
+      {
+        "action_type": "video_view",
+        "value": "1"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "9"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242396279640346",
+    "ad_name": "AD1  -- VÍDEO",
+    "impressions": "85",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "79"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "page_engagement",
+        "value": "20"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "20"
+      },
+      {
+        "action_type": "video_view",
+        "value": "20"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242396279650346",
+    "ad_name": "AD2 - VÍDEO",
+    "impressions": "129",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "114"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "link_click",
+        "value": "3"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "39"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "39"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "1"
+      },
+      {
+        "action_type": "video_view",
+        "value": "35"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "1"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242396279670346",
+    "ad_name": "AD3 - VÍDEO",
+    "impressions": "370",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "363"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "link_click",
+        "value": "2"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "99"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "99"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "2"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "2"
+      },
+      {
+        "action_type": "lead",
+        "value": "1"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "1"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "1"
+      },
+      {
+        "action_type": "video_view",
+        "value": "95"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "2"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242435955490346",
+    "ad_name": "AD 1 - VÍDEO",
+    "impressions": "208",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "183"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "3"
+      },
+      {
+        "action_type": "link_click",
+        "value": "8"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "96"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "95"
+      },
+      {
+        "action_type": "like",
+        "value": "1"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "3"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "3"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "3"
+      },
+      {
+        "action_type": "lead",
+        "value": "3"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "3"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "3"
+      },
+      {
+        "action_type": "video_view",
+        "value": "84"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "3"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242436074960346",
+    "ad_name": "AD 2 - VÍDEO",
+    "impressions": "27",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "24"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "link_click",
+        "value": "2"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "7"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "7"
+      },
+      {
+        "action_type": "video_view",
+        "value": "5"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242436084260346",
+    "ad_name": "AD 3 - VÍDEO",
+    "impressions": "1626",
+    "video_play_actions": [
+      {
+        "action_type": "video_view",
+        "value": "1512"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "15"
+      },
+      {
+        "action_type": "link_click",
+        "value": "60"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "875"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "875"
+      },
+      {
+        "action_type": "comment",
+        "value": "1"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "24"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "15"
+      },
+      {
+        "action_type": "onsite_conversion.post_save",
+        "value": "2"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "21"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_save",
+        "value": "2"
+      },
+      {
+        "action_type": "lead",
+        "value": "15"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "15"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "15"
+      },
+      {
+        "action_type": "video_view",
+        "value": "791"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "21"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  },
+  {
+    "ad_id": "120242436098150346",
+    "ad_name": "AD 4 - IMG",
+    "impressions": "575",
+    "actions": [
+      {
+        "action_type": "offsite_complete_registration_add_meta_leads",
+        "value": "2"
+      },
+      {
+        "action_type": "link_click",
+        "value": "10"
+      },
+      {
+        "action_type": "page_engagement",
+        "value": "12"
+      },
+      {
+        "action_type": "post_engagement",
+        "value": "12"
+      },
+      {
+        "action_type": "post_interaction_gross",
+        "value": "2"
+      },
+      {
+        "action_type": "offsite_search_add_meta_leads",
+        "value": "2"
+      },
+      {
+        "action_type": "onsite_conversion.post_net_like",
+        "value": "2"
+      },
+      {
+        "action_type": "lead",
+        "value": "2"
+      },
+      {
+        "action_type": "offsite_content_view_add_meta_leads",
+        "value": "2"
+      },
+      {
+        "action_type": "onsite_conversion.lead_grouped",
+        "value": "2"
+      },
+      {
+        "action_type": "post_reaction",
+        "value": "2"
+      }
+    ],
+    "date_start": "2026-02-05",
+    "date_stop": "2026-02-06"
+  }
+]

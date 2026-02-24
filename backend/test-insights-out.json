@@ -1,0 +1,66 @@
+{
+  "name": "AD3 - VÍDEO",
+  "insights": {
+    "data": [
+      {
+        "video_play_actions": [
+          {
+            "action_type": "video_view",
+            "value": "1365"
+          }
+        ],
+        "video_p25_watched_actions": [
+          {
+            "action_type": "video_view",
+            "value": "143"
+          }
+        ],
+        "video_p50_watched_actions": [
+          {
+            "action_type": "video_view",
+            "value": "82"
+          }
+        ],
+        "video_p75_watched_actions": [
+          {
+            "action_type": "video_view",
+            "value": "41"
+          }
+        ],
+        "video_p100_watched_actions": [
+          {
+            "action_type": "video_view",
+            "value": "14"
+          }
+        ],
+        "video_15_sec_watched_actions": [
+          {
+            "action_type": "video_view",
+            "value": "223"
+          }
+        ],
+        "video_30_sec_watched_actions": [
+          {
+            "action_type": "video_view",
+            "value": "151"
+          }
+        ],
+        "video_avg_time_watched_actions": [
+          {
+            "action_type": "video_view",
+            "value": "12"
+          }
+        ],
+        "date_start": "2026-01-22",
+        "date_stop": "2026-02-20"
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "before": "MAZDZD",
+        "after": "MAZDZD"
+      }
+    }
+  },
+  "id": "120242980298700346"
+}

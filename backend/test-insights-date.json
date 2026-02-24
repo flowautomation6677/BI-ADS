@@ -1,0 +1,232 @@
+[
+  {
+    "name": "AD3 - VÍDEO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "1442",
+          "reach": "1412",
+          "cpm": "31.664355",
+          "spend": "45.66",
+          "clicks": "54",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242980298700346"
+  },
+  {
+    "name": "AD1 - ESTÁTICO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "163",
+          "reach": "154",
+          "cpm": "22.883436",
+          "spend": "3.73",
+          "clicks": "3",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242980298710346"
+  },
+  {
+    "name": "AD5 - VÍDEO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "1030",
+          "reach": "971",
+          "cpm": "40.524272",
+          "spend": "41.74",
+          "clicks": "43",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242980298720346"
+  },
+  {
+    "name": "AD2 - ESTÁTICO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "106",
+          "reach": "105",
+          "cpm": "20.566038",
+          "spend": "2.18",
+          "clicks": "1",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242980298760346"
+  },
+  {
+    "name": "AD4 - VÍDEO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "82",
+          "reach": "78",
+          "cpm": "64.878049",
+          "spend": "5.32",
+          "clicks": "1",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242980298740346"
+  },
+  {
+    "name": "AD6 - VÍDEO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "19",
+          "reach": "19",
+          "cpm": "36.842105",
+          "spend": "0.7",
+          "clicks": "3",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242980298750346"
+  },
+  {
+    "name": "AD3 - VÍDEO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "2652",
+          "reach": "2470",
+          "cpm": "27.236048",
+          "spend": "72.23",
+          "clicks": "108",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242934045000346"
+  },
+  {
+    "name": "AD6 - VÍDEO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "7",
+          "reach": "7",
+          "cpm": "10",
+          "spend": "0.07",
+          "clicks": "0",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242934151960346"
+  },
+  {
+    "name": "AD2 - ESTÁTICO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "133",
+          "reach": "125",
+          "cpm": "28.87218",
+          "spend": "3.84",
+          "clicks": "11",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242933961930346"
+  },
+  {
+    "name": "AD5 - VÍDEO",
+    "insights": {
+      "data": [
+        {
+          "impressions": "764",
+          "reach": "668",
+          "cpm": "30.235602",
+          "spend": "23.1",
+          "clicks": "43",
+          "date_start": "2026-01-22",
+          "date_stop": "2026-02-20"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MAZDZD"
+        }
+      }
+    },
+    "id": "120242934128000346"
+  }
+]
