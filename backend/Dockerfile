@@ -1,5 +1,8 @@
 FROM node:20-alpine
 
+# Prisma requer OpenSSL no Alpine
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # Copia dependências primeiro (cache de camadas)
