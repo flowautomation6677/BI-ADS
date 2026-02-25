@@ -6,6 +6,7 @@ import AdCard from "@/components/AdCard";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import KPICards from "@/components/dashboard/KPICards";
 import TrendChart from "@/components/dashboard/TrendChart";
+import MetricTrendChart from "@/components/dashboard/MetricTrendChart";
 import CampaignTable from "@/components/dashboard/CampaignTable";
 import AdSetTable from "@/components/dashboard/AdSetTable";
 import Drawer from "@/components/dashboard/Drawer";
@@ -225,6 +226,7 @@ export default function ReportPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-3">
                         <TrendChart data={data.trend_data} />
+                        <MetricTrendChart data={data.trend_data} />
                     </div>
                     <div className="lg:col-span-3">
                         <h3 className="text-lg font-bold text-gray-800 mb-4">Campanhas Ativas</h3>
