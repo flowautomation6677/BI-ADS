@@ -23,7 +23,8 @@ export default function Home() {
 
     try {
       // In production, use NEXT_PUBLIC_API_URL
-      const res = await fetch("http://localhost:3001/api/relatorio", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiUrl}/api/relatorio`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
