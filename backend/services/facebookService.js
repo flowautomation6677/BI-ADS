@@ -233,17 +233,26 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
         }
 
         const insights = await account.getInsights(
-            ['spend', 'actions', 'action_values'],
+            ['spend', 'clicks', 'inline_link_clicks', 'impressions', 'cpm', 'ctr', 'inline_link_click_ctr', 'actions', 'action_values'],
             options
         );
 
         return insights.map(item => {
             const data = item._data;
             const spend = Number.parseFloat(data.spend) || 0;
+            const impressions = Number.parseInt(data.impressions, 10) || 0;
+            const clicks = Number.parseInt(data.inline_link_clicks, 10) || Number.parseInt(data.clicks, 10) || 0;
+            const cpm = Number.parseFloat(data.cpm) || 0;
+            const ctr = Number.parseFloat(data.inline_link_click_ctr) || Number.parseFloat(data.ctr) || 0;
+
+            let revenue = 0;
+            if (data.action_values) {
+                const purchaseValue = data.action_values.find(a => a.action_type === 'purchase');
+                if (purchaseValue) revenue = Number.parseFloat(purchaseValue.value) || 0;
+            }
 
             let cpa = 0;
             let conversoes = 0;
-
             if (data.actions) {
                 const action = data.actions.find(a => a.action_type === 'purchase') ||
                     data.actions.find(a => a.action_type === 'lead') ||
@@ -259,9 +268,15 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
 
             return {
                 date: data.date_start,
-                spend: spend,
-                conversoes: conversoes,
-                cpa: cpa
+                spend,
+                impressions,
+                clicks,
+                cpm,
+                ctr,
+                revenue,
+                conversoes,
+                cpa,
+                roas: spend > 0 && revenue > 0 ? revenue / spend : 0,
             };
         });
 
