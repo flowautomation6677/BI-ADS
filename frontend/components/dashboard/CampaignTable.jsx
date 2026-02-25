@@ -24,11 +24,25 @@ export default function CampaignTable({ data, onRowClick }) {
         }),
         columnHelper.accessor('status', {
             header: 'Status',
-            cell: info => (
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${info.getValue() === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                    {info.getValue() === 'ACTIVE' ? 'Ativo' : info.getValue()}
-                </span>
-            ),
+            cell: info => {
+                const val = info.getValue();
+                const statusMap = {
+                    'ACTIVE': { label: 'Ativo', style: 'bg-green-100 text-green-700' },
+                    'PAUSED': { label: 'Pausado', style: 'bg-gray-100 text-gray-600' },
+                    'CAMPAIGN_PAUSED': { label: 'Camp. Pausada', style: 'bg-gray-100 text-gray-600' },
+                    'ADSET_PAUSED': { label: 'Conj. Pausado', style: 'bg-gray-100 text-gray-600' },
+                    'DELETED': { label: 'Excluído', style: 'bg-red-100 text-red-600' },
+                    'ARCHIVED': { label: 'Arquivado', style: 'bg-yellow-100 text-yellow-700' },
+                    'IN_PROCESS': { label: 'Processando', style: 'bg-blue-100 text-blue-700' },
+                    'WITH_ISSUES': { label: 'Com Problemas', style: 'bg-orange-100 text-orange-700' },
+                };
+                const s = statusMap[val] || { label: val, style: 'bg-gray-100 text-gray-500' };
+                return (
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${s.style}`}>
+                        {s.label}
+                    </span>
+                );
+            },
         }),
         columnHelper.accessor(row => row.metricas.spend, {
             id: 'spend',
