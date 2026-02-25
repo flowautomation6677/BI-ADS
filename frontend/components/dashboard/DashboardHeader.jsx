@@ -24,6 +24,7 @@ export default function DashboardHeader({
 
     const dateRanges = [
         { label: 'Hoje', value: 'today' },
+        { label: 'Ontem', value: 'yesterday' },
         { label: 'Últimos 7 dias', value: '7d' },
         { label: 'Últimos 14 dias', value: '14d' },
         { label: 'Últimos 30 dias', value: '30d' },

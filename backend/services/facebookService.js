@@ -11,6 +11,7 @@ if (process.env.FB_ACCESS_TOKEN) {
 const mapDateRangeToPreset = (range) => {
     switch (range) {
         case 'today': return 'today';
+        case 'yesterday': return 'yesterday';
         case '7d': return 'last_7d';
         case '14d': return 'last_14d';
         case '30d': return 'last_30d';
