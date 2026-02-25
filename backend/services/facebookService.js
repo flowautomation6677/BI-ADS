@@ -176,7 +176,7 @@ const fetchAdData = async (adAccountId, filters = {}) => {
         }
 
         const ads = await account.getAds(
-            ['name', 'status', 'creative', 'campaign{id,name}', 'adset{id,name}', 'campaign_id', 'campaign_name', 'adset_id', 'adset_name', `${insightsParams}{spend,cpc,ctr,inline_link_click_ctr,clicks,inline_link_clicks,action_values,actions,purchase_roas,cpm,frequency,impressions,reach,video_15_sec_watched_actions,video_p25_watched_actions,video_p50_watched_actions,video_p75_watched_actions,video_p95_watched_actions,video_p100_watched_actions}`],
+            ['name', 'status', 'effective_status', 'creative', 'campaign{id,name}', 'adset{id,name}', 'campaign_id', 'campaign_name', 'adset_id', 'adset_name', `${insightsParams}{spend,cpc,ctr,inline_link_click_ctr,clicks,inline_link_clicks,action_values,actions,purchase_roas,cpm,frequency,impressions,reach,video_15_sec_watched_actions,video_p25_watched_actions,video_p50_watched_actions,video_p75_watched_actions,video_p95_watched_actions,video_p100_watched_actions}`],
             options
         );
 
@@ -197,6 +197,7 @@ const fetchAdData = async (adAccountId, filters = {}) => {
                 adset_id: adJson.adset?.id || adJson.adset_id,
                 adset_name: adJson.adset?.name || adJson.adset_name,
                 status: adJson.status,
+                effective_status: adJson.effective_status || adJson.status,
                 imagem: imageUrl,
                 video: videoUrl, // url para player (pode ser null)
                 is_video: isVideo, // flag indicadora

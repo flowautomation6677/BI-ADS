@@ -77,10 +77,14 @@ const getReport = async (req, res) => {
                 campaignMap[cId] = {
                     campaign_id: cId,
                     campaign_name: ad.campaign_name || 'Desconhecida',
-                    status: ad.status,
+                    status: 'PAUSED', // será atualizado para ACTIVE se qualquer anúncio estiver ativo
                     metricas: { spend: 0, clicks: 0, conversoes: 0, roasSum: 0, roasCount: 0, impressions: 0, reach: 0 },
                     conjuntos: {}
                 };
+            }
+            // Se qualquer anúncio da campanha tiver effective_status ACTIVE → campanha ATIVA
+            if (ad.effective_status === 'ACTIVE') {
+                campaignMap[cId].status = 'ACTIVE';
             }
 
             const aId = ad.adset_id || 'sem_conjunto';
@@ -88,10 +92,13 @@ const getReport = async (req, res) => {
                 campaignMap[cId].conjuntos[aId] = {
                     adset_id: aId,
                     adset_name: ad.adset_name || 'Desconhecido',
-                    status: ad.status,
+                    status: 'PAUSED',
                     metricas: { spend: 0, clicks: 0, conversoes: 0, roasSum: 0, roasCount: 0, impressions: 0, reach: 0, totalAds: 0 },
                     anuncios: []
                 };
+            }
+            if (ad.effective_status === 'ACTIVE') {
+                campaignMap[cId].conjuntos[aId].status = 'ACTIVE';
             }
 
             // Soma Campanha
