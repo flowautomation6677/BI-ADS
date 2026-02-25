@@ -67,9 +67,12 @@ export default function Home() {
       <div className="max-w-xl mx-auto">
         <div className="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
           <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">Admin Dashboard</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Crie novos relatórios para seus clientes e gere links seguros de compartilhamento.
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <img src="/logo.png" alt="BI ADS" className="w-10 h-10 rounded-lg" />
+              <span className="text-2xl font-bold tracking-tight text-gray-900">BI ADS</span>
+            </div>
+            <p className="mt-1 text-sm text-gray-600">
+              Crie relatórios para seus clientes e gere links seguros de compartilhamento.
             </p>
           </div>
 
