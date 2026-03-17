@@ -157,11 +157,15 @@ const getReport = async (req, res) => {
             trend_data: trendData,
             campanhas: campanhas
         };
-        console.log("DEBUG PAYLOAD CAMPANHAS[0] METRICAS:", JSON.stringify(campanhas[0]?.metricas));
+        // Cache de 5 minutos no browser/CDN para evitar chamadas duplicadas à API do Facebook
+        res.set('Cache-Control', 'public, max-age=300');
         return res.json(payload);
 
     } catch (error) {
-        console.error("Erro no Report Controller:", error);
+        // Log detalhado para diagnóstico de rate limit do Facebook
+        const fbStatus = error.response?.status || error.status || 'N/A';
+        const fbCode = error.response?.data?.error?.code || error.code || 'N/A';
+        console.error(`Erro no Report Controller [HTTP ${fbStatus} | FB Code ${fbCode}]:`, error.message);
         return res.status(500).json({
             error: "Erro na comunicação com o Facebook.",
             details: error.message || error.toString()

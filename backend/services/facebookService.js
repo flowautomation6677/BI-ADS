@@ -8,6 +8,29 @@ if (process.env.FB_ACCESS_TOKEN) {
     api.setDebug(false);
 }
 
+// Cache em memória para evitar rate limit do Facebook
+// Chave: string com adAccountId + filtros | Valor: { data, expiresAt }
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
+const adDataCache = new Map();
+const trendDataCache = new Map();
+
+const buildCacheKey = (adAccountId, filters) =>
+    `${adAccountId}::${filters.dateRange || ''}::${filters.startDate || ''}::${filters.endDate || ''}::${filters.status || ''}`;
+
+const getFromCache = (cache, key) => {
+    const entry = cache.get(key);
+    if (!entry) return null;
+    if (Date.now() > entry.expiresAt) {
+        cache.delete(key);
+        return null;
+    }
+    return entry.data;
+};
+
+const setInCache = (cache, key, data) => {
+    cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+};
+
 const mapDateRangeToPreset = (range) => {
     switch (range) {
         case 'today': return 'today';
@@ -157,6 +180,15 @@ const fetchAdData = async (adAccountId, filters = {}) => {
         throw new Error("Token de acesso do Facebook não configurado no servidor.");
     }
 
+    // Verifica cache antes de chamar o Facebook
+    const cacheKey = buildCacheKey(adAccountId, filters);
+    const cached = getFromCache(adDataCache, cacheKey);
+    if (cached) {
+        console.log(`[Cache HIT] adData para ${adAccountId} (filtros: ${cacheKey})`);
+        return cached;
+    }
+    console.log(`[Cache MISS] Buscando adData no Facebook para ${adAccountId}`);
+
     const account = new AdAccount(adAccountId);
 
     try {
@@ -180,16 +212,15 @@ const fetchAdData = async (adAccountId, filters = {}) => {
             options
         );
 
-        const adsData = [];
-
-        for (let ad of ads) {
+        // Busca criativos em paralelo (em vez de sequencial) para reduzir o tempo
+        // e minimizar a janela de consumo de rate limit do Facebook
+        const adsData = await Promise.all(ads.map(async (ad) => {
             const adJson = ad._data;
-
             const creativeDetails = await getCreativeDetails(adJson);
             const metrics = formatMetrics(adJson);
             const { imageUrl, videoUrl, copyPrincipal, title, isVideo } = extractCreativeData(creativeDetails, adJson.name);
 
-            adsData.push({
+            return {
                 id: adJson.id,
                 nome_anuncio: adJson.name,
                 campaign_id: adJson.campaign?.id || adJson.campaign_id,
@@ -201,15 +232,18 @@ const fetchAdData = async (adAccountId, filters = {}) => {
                 status: adJson.status,
                 effective_status: adJson.effective_status || adJson.status,
                 imagem: imageUrl,
-                video: videoUrl, // url para player (pode ser null)
-                is_video: isVideo, // flag indicadora
+                video: videoUrl,
+                is_video: isVideo,
                 titulo: title,
                 copy_principal: copyPrincipal,
                 metricas: metrics
-            });
-        }
+            };
+        }));
 
+        // Armazena no cache antes de retornar
+        setInCache(adDataCache, cacheKey, adsData);
         return adsData;
+
     } catch (error) {
         console.error("Erro na integração com Facebook API (Ads):", error.message);
         throw error;
@@ -221,6 +255,15 @@ const fetchAdData = async (adAccountId, filters = {}) => {
  */
 const fetchAccountTrendData = async (adAccountId, filters = {}) => {
     if (!process.env.FB_ACCESS_TOKEN) return [];
+
+    // Verifica cache antes de chamar o Facebook
+    const cacheKey = buildCacheKey(adAccountId, filters);
+    const cached = getFromCache(trendDataCache, cacheKey);
+    if (cached) {
+        console.log(`[Cache HIT] trendData para ${adAccountId}`);
+        return cached;
+    }
+    console.log(`[Cache MISS] Buscando trendData no Facebook para ${adAccountId}`);
 
     const account = new AdAccount(adAccountId);
 
@@ -240,7 +283,7 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
             options
         );
 
-        return insights.map(item => {
+        const result = insights.map(item => {
             const data = item._data;
             const spend = Number.parseFloat(data.spend) || 0;
             const impressions = Number.parseInt(data.impressions, 10) || 0;
@@ -282,6 +325,10 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
                 roas: spend > 0 && revenue > 0 ? revenue / spend : 0,
             };
         });
+
+        // Armazena no cache antes de retornar
+        setInCache(trendDataCache, cacheKey, result);
+        return result;
 
     } catch (error) {
         console.error("Erro na integração com Facebook API (Trend):", error.message);
