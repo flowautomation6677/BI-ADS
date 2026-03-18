@@ -90,7 +90,11 @@ const extractActionMetrics = (insight, spend) => {
         const action = insight.actions.find(a =>
             a.action_type === 'purchase' ||
             a.action_type === 'lead' ||
-            a.action_type === 'onsite_web_lead'
+            a.action_type === 'onsite_web_lead' ||
+            a.action_type === 'onsite_conversion.messaging_conversation_started_7d' ||
+            a.action_type === 'onsite_conversion.messaging_first_reply' ||
+            a.action_type === 'messages' ||
+            a.action_type === 'leadgen_grouped'
         );
 
         if (action && spend > 0) {
@@ -318,7 +322,11 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
             if (data.actions) {
                 const action = data.actions.find(a => a.action_type === 'purchase') ||
                     data.actions.find(a => a.action_type === 'lead') ||
-                    data.actions.find(a => a.action_type === 'onsite_web_lead');
+                    data.actions.find(a => a.action_type === 'onsite_web_lead') ||
+                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_conversation_started_7d') ||
+                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_first_reply') ||
+                    data.actions.find(a => a.action_type === 'messages') ||
+                    data.actions.find(a => a.action_type === 'leadgen_grouped');
 
                 if (action && spend > 0) {
                     conversoes = Number.parseInt(action.value, 10);
