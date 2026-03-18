@@ -299,7 +299,7 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
         }
 
         const insights = await account.getInsights(
-            ['spend', 'clicks', 'inline_link_clicks', 'impressions', 'cpm', 'ctr', 'inline_link_click_ctr', 'actions', 'action_values'],
+            ['date_start', 'spend', 'clicks', 'inline_link_clicks', 'impressions', 'cpm', 'ctr', 'inline_link_click_ctr', 'actions', 'action_values'],
             options
         );
 

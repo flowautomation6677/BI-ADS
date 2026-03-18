@@ -19,7 +19,7 @@ export default function TrendChart({ data }) {
     // Remove empty data elements, sort by date
     const chartData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date)).map(d => ({
         ...d,
-        formatedDate: new Date(d.date + 'T12:00:00Z').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
+        formatedDate: new Date(d.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
         // Derivar métricas caso não venham prontas no trend_data
         cpa: d.conversoes > 0 ? d.spend / d.conversoes : 0,
         roas: d.spend > 0 ? d.revenue / d.spend : 0,
