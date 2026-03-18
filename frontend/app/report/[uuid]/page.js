@@ -44,7 +44,7 @@ export default function ReportPage() {
     };
 
     // Gestão de Estado via URL (Deep Linking)
-    const dateRange = searchParams.get('dateRange') || '30d';
+    const dateRange = searchParams.get('dateRange') || '7d';
     const campaignId = searchParams.get('campaignId');
     const adsetId = searchParams.get('adsetId');
     const kpi = searchParams.get('kpi'); // opcional

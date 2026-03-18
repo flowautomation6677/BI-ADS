@@ -8,9 +8,10 @@ if (process.env.FB_ACCESS_TOKEN) {
     api.setDebug(false);
 }
 
-// Cache em memória para evitar rate limit do Facebook
-// Chave: string com adAccountId + filtros | Valor: { data, expiresAt }
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
+// ─── Cache em memória ───────────────────────────────────────────────────────
+// Evita rate limit do Facebook (Ads Management: ~200 calls/hora por app).
+// TTL de 30 minutos. Chave inclui conta + filtros de data.
+const CACHE_TTL_MS = 30 * 60 * 1000;
 const adDataCache = new Map();
 const trendDataCache = new Map();
 
@@ -30,6 +31,7 @@ const getFromCache = (cache, key) => {
 const setInCache = (cache, key, data) => {
     cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
 };
+// ────────────────────────────────────────────────────────────────────────────
 
 const mapDateRangeToPreset = (range) => {
     switch (range) {
@@ -42,26 +44,6 @@ const mapDateRangeToPreset = (range) => {
         case 'last_month': return 'last_month';
         case 'maximum': return 'maximum';
         default: return 'last_30d';
-    }
-};
-
-const getCreativeDetails = async (adJson) => {
-    if (!adJson.creative?.id) return null;
-
-    try {
-        const creative = new bizSdk.AdCreative(adJson.creative.id);
-        const creativeData = await creative.get([
-            'image_url',
-            'thumbnail_url',
-            'title',
-            'body',
-            'object_story_spec',
-            'asset_feed_spec'
-        ]);
-        return creativeData._data;
-    } catch (e) {
-        console.warn(`Aviso: Falha ao buscar detalhes do criativo ${adJson.creative.id}`, e.message);
-        return null;
     }
 };
 
@@ -143,37 +125,54 @@ const formatMetrics = (adJson) => {
     };
 };
 
-const extractCreativeData = (creativeDetails, fallbackName) => {
+/**
+ * Extrai dados do criativo diretamente do objeto do anúncio (sem chamada extra à API).
+ * Os dados do criativo devem ter sido solicitados como nested fields em getAds().
+ */
+const extractCreativeData = (adJson) => {
     let imageUrl = null;
     let videoUrl = null;
     let copyPrincipal = null;
     let title = null;
     let isVideo = false;
 
-    if (creativeDetails) {
-        imageUrl = creativeDetails.image_url || creativeDetails.thumbnail_url;
-        title = creativeDetails.title;
-        copyPrincipal = creativeDetails.body;
+    const creativeData = adJson.creative;
 
-        const spec = creativeDetails.object_story_spec;
+    if (creativeData) {
+        imageUrl = creativeData.image_url || creativeData.thumbnail_url || null;
+        title = creativeData.title || null;
+        copyPrincipal = creativeData.body || null;
+
+        const spec = creativeData.object_story_spec;
         if (spec?.link_data) {
-            copyPrincipal = copyPrincipal || spec.link_data.message;
-            title = title || spec.link_data.name;
+            copyPrincipal = copyPrincipal || spec.link_data.message || null;
+            title = title || spec.link_data.name || null;
         } else if (spec?.video_data) {
-            copyPrincipal = copyPrincipal || spec.video_data.message;
-            title = title || spec.video_data.title;
+            copyPrincipal = copyPrincipal || spec.video_data.message || null;
+            title = title || spec.video_data.title || null;
             videoUrl = spec.video_data.video_url || null;
             isVideo = true;
         }
+
+        // Fallback para asset_feed_spec (anúncios dinâmicos)
+        if (!imageUrl && creativeData.asset_feed_spec?.images?.length > 0) {
+            imageUrl = creativeData.asset_feed_spec.images[0]?.url || null;
+        }
     }
 
-    return { imageUrl, videoUrl, copyPrincipal, title: title || fallbackName, isVideo };
+    return {
+        imageUrl,
+        videoUrl,
+        copyPrincipal,
+        title: title || adJson.name,
+        isVideo
+    };
 };
 
 /**
- * Busca todos os anúncios e suas métricas e criativos
- * @param {string} adAccountId O ID da conta (incluindo o prefixo 'act_')
- * @param {object} filters Filtros opcionais de data e status
+ * Busca todos os anúncios com métricas E criativos em UMA ÚNICA chamada à API.
+ * Uso de nested fields elimina as N chamadas extras (uma por anúncio).
+ * Total: 2 chamadas por acesso (ads + trend), independente do número de anúncios.
  */
 const fetchAdData = async (adAccountId, filters = {}) => {
     if (!process.env.FB_ACCESS_TOKEN || process.env.FB_ACCESS_TOKEN === 'SEU_TOKEN_DE_ACESSO_AQUI') {
@@ -184,7 +183,7 @@ const fetchAdData = async (adAccountId, filters = {}) => {
     const cacheKey = buildCacheKey(adAccountId, filters);
     const cached = getFromCache(adDataCache, cacheKey);
     if (cached) {
-        console.log(`[Cache HIT] adData para ${adAccountId} (filtros: ${cacheKey})`);
+        console.log(`[Cache HIT] adData para ${adAccountId} (TTL 30min)`);
         return cached;
     }
     console.log(`[Cache MISS] Buscando adData no Facebook para ${adAccountId}`);
@@ -196,6 +195,7 @@ const fetchAdData = async (adAccountId, filters = {}) => {
         if (filters.status) {
             options.effective_status = [filters.status];
         }
+
         let insightsParams;
         if (filters.startDate && filters.endDate) {
             options.time_range = { since: filters.startDate, until: filters.endDate };
@@ -207,18 +207,33 @@ const fetchAdData = async (adAccountId, filters = {}) => {
             insightsParams = 'insights.date_preset(maximum)';
         }
 
+        // ─── SOLUÇÃO PRINCIPAL: campos do criativo como nested fields ───────────
+        // Em vez de 1 chamada por anúncio (N calls), os dados do criativo são
+        // servidos dentro do mesmo response do getAds() — apenas 1 chamada total.
+        // ────────────────────────────────────────────────────────────────────────
+        const creativeFields = 'creative{image_url,thumbnail_url,title,body,object_story_spec,asset_feed_spec}';
+
         const ads = await account.getAds(
-            ['name', 'status', 'effective_status', 'creative', 'campaign{id,name,effective_status}', 'adset{id,name,effective_status}', 'campaign_id', 'campaign_name', 'adset_id', 'adset_name', `${insightsParams}{spend,cpc,ctr,inline_link_click_ctr,clicks,inline_link_clicks,action_values,actions,purchase_roas,cpm,frequency,impressions,reach,video_15_sec_watched_actions,video_p25_watched_actions,video_p50_watched_actions,video_p75_watched_actions,video_p95_watched_actions,video_p100_watched_actions}`],
+            [
+                'name',
+                'status',
+                'effective_status',
+                creativeFields,
+                'campaign{id,name,effective_status}',
+                'adset{id,name,effective_status}',
+                'campaign_id',
+                'campaign_name',
+                'adset_id',
+                'adset_name',
+                `${insightsParams}{spend,cpc,ctr,inline_link_click_ctr,clicks,inline_link_clicks,action_values,actions,purchase_roas,cpm,frequency,impressions,reach,video_15_sec_watched_actions,video_p25_watched_actions,video_p50_watched_actions,video_p75_watched_actions,video_p95_watched_actions,video_p100_watched_actions}`
+            ],
             options
         );
 
-        // Busca criativos em paralelo (em vez de sequencial) para reduzir o tempo
-        // e minimizar a janela de consumo de rate limit do Facebook
-        const adsData = await Promise.all(ads.map(async (ad) => {
+        const adsData = ads.map((ad) => {
             const adJson = ad._data;
-            const creativeDetails = await getCreativeDetails(adJson);
             const metrics = formatMetrics(adJson);
-            const { imageUrl, videoUrl, copyPrincipal, title, isVideo } = extractCreativeData(creativeDetails, adJson.name);
+            const { imageUrl, videoUrl, copyPrincipal, title, isVideo } = extractCreativeData(adJson);
 
             return {
                 id: adJson.id,
@@ -238,10 +253,11 @@ const fetchAdData = async (adAccountId, filters = {}) => {
                 copy_principal: copyPrincipal,
                 metricas: metrics
             };
-        }));
+        });
 
-        // Armazena no cache antes de retornar
+        // Armazena no cache (30 min)
         setInCache(adDataCache, cacheKey, adsData);
+        console.log(`[Facebook API] ${adsData.length} anúncios carregados. Próxima chamada em 30 min (cache).`);
         return adsData;
 
     } catch (error) {
@@ -251,7 +267,7 @@ const fetchAdData = async (adAccountId, filters = {}) => {
 };
 
 /**
- * Busca os dados diários da conta inteira para montar o gráfico de tendência
+ * Busca os dados diários da conta inteira para montar o gráfico de tendência.
  */
 const fetchAccountTrendData = async (adAccountId, filters = {}) => {
     if (!process.env.FB_ACCESS_TOKEN) return [];
@@ -260,7 +276,7 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
     const cacheKey = buildCacheKey(adAccountId, filters);
     const cached = getFromCache(trendDataCache, cacheKey);
     if (cached) {
-        console.log(`[Cache HIT] trendData para ${adAccountId}`);
+        console.log(`[Cache HIT] trendData para ${adAccountId} (TTL 30min)`);
         return cached;
     }
     console.log(`[Cache MISS] Buscando trendData no Facebook para ${adAccountId}`);
@@ -326,7 +342,7 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
             };
         });
 
-        // Armazena no cache antes de retornar
+        // Armazena no cache (30 min)
         setInCache(trendDataCache, cacheKey, result);
         return result;
 
