@@ -337,7 +337,7 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
             }
 
             return {
-                date: data.date_start,
+                date: data.date_start + 'T12:00:00.000Z',
                 spend,
                 impressions,
                 clicks,

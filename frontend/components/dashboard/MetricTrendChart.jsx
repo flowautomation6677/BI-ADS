@@ -45,7 +45,7 @@ export default function MetricTrendChart({ data }) {
         .sort((a, b) => new Date(a.date) - new Date(b.date))
         .map(d => ({
             ...d,
-            formatedDate: new Date(d.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
+            formatedDate: new Date(d.date + 'T12:00:00Z').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
             cpa: d.conversoes > 0 ? d.spend / d.conversoes : 0,
             roas: d.spend > 0 ? d.revenue / d.spend : 0,
             cpm: d.impressions > 0 ? (d.spend / d.impressions) * 1000 : 0,
