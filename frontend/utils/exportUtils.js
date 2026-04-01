@@ -1,5 +1,3 @@
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 export const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
@@ -12,7 +10,9 @@ export const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'curre
 export const exportTableToPDF = async (title, columns, data) => {
     const { default: jsPDF } = await import('jspdf');
     await import('jspdf-autotable');
-    
+    const { format } = await import('date-fns');
+    const { ptBR } = await import('date-fns/locale');
+
     const doc = new jsPDF('landscape');
     
     // Configurações do cabeçalho
@@ -57,6 +57,7 @@ export const exportDailyDataToXLSX = async (campaignName, dailyData) => {
 
     const XLSX = await import('xlsx');
     const { saveAs } = await import('file-saver');
+    const { format } = await import('date-fns');
 
     // Converte / Mapeia e formata os objetos
     const mappedData = dailyData.map(d => ({
@@ -94,6 +95,8 @@ export const exportDailyDataToPDF = async (campaignName, dailyData) => {
 
     const { default: jsPDF } = await import('jspdf');
     await import('jspdf-autotable');
+    const { format } = await import('date-fns');
+    const { ptBR } = await import('date-fns/locale');
 
     const doc = new jsPDF('landscape');
     
