@@ -1,7 +1,3 @@
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -13,7 +9,10 @@ export const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'curre
  * @param {Array} columns Ex: [{ header: 'Campanha', dataKey: 'campaign_name' }, ...]
  * @param {Array} data Ex: [{ campaign_name: 'Camp. 1', spend: 'R$ 10,00', ... }]
  */
-export const exportTableToPDF = (title, columns, data) => {
+export const exportTableToPDF = async (title, columns, data) => {
+    const { default: jsPDF } = await import('jspdf');
+    await import('jspdf-autotable');
+    
     const doc = new jsPDF('landscape');
     
     // Configurações do cabeçalho
@@ -53,8 +52,11 @@ export const exportTableToPDF = (title, columns, data) => {
  * @param {string} campaignName Nome da campanha
  * @param {Array} dailyData Dados diários do endpoint `/daily`
  */
-export const exportDailyDataToXLSX = (campaignName, dailyData) => {
+export const exportDailyDataToXLSX = async (campaignName, dailyData) => {
     if (!dailyData?.length) return;
+
+    const XLSX = await import('xlsx');
+    const { saveAs } = await import('file-saver');
 
     // Converte / Mapeia e formata os objetos
     const mappedData = dailyData.map(d => ({
@@ -87,8 +89,11 @@ export const exportDailyDataToXLSX = (campaignName, dailyData) => {
  * @param {string} campaignName Nome da campanha
  * @param {Array} dailyData Dados diários do endpoint `/daily`
  */
-export const exportDailyDataToPDF = (campaignName, dailyData) => {
+export const exportDailyDataToPDF = async (campaignName, dailyData) => {
     if (!dailyData?.length) return;
+
+    const { default: jsPDF } = await import('jspdf');
+    await import('jspdf-autotable');
 
     const doc = new jsPDF('landscape');
     
