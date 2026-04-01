@@ -13,7 +13,8 @@ import Drawer from "@/components/dashboard/Drawer";
 import DonutChart from "@/components/dashboard/DonutChart";
 import CPAHorizontalBar from "@/components/dashboard/CPAHorizontalBar";
 import ABViewerModal from "@/components/dashboard/ABViewerModal";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download, FileSpreadsheet, FileText } from "lucide-react";
+import { exportDailyDataToXLSX, exportDailyDataToPDF, exportTableToPDF } from "@/utils/exportUtils";
 
 export default function ReportPage() {
     const params = useParams();
@@ -28,6 +29,9 @@ export default function ReportPage() {
 
     // A/B Viewer State
     const [abSelectedAds, setAbSelectedAds] = useState([]);
+    
+    // Export State
+    const [isExportingDaily, setIsExportingDaily] = useState(false);
 
     const handleSelectForAB = (ad) => {
         setAbSelectedAds(prev => {
@@ -57,6 +61,18 @@ export default function ReportPage() {
     if (selectedAdSet) level = 'adset';
     else if (selectedCampaign) level = 'campaign_detail';
 
+    const calculateNextProgress = (prev) => {
+        let increment = 0;
+        if (prev < 50) {
+            increment = 5;
+        } else if (prev < 80) {
+            increment = 2;
+        } else if (prev < 95) {
+            increment = 1;
+        }
+        return Math.min(95, prev + increment);
+    };
+
     useEffect(() => {
         let progressInterval;
         let timeoutId;
@@ -66,10 +82,7 @@ export default function ReportPage() {
                 setLoadingProgress(0);
 
                 progressInterval = setInterval(() => {
-                    setLoadingProgress(prev => {
-                        const next = prev + (prev < 50 ? 5 : prev < 80 ? 2 : prev < 95 ? 1 : 0);
-                        return next > 95 ? 95 : next;
-                    });
+                    setLoadingProgress(calculateNextProgress);
                 }, 100);
 
                 // Calcula as datas com base no dateRange selecionado (opcional caso o backend faça)
@@ -145,6 +158,63 @@ export default function ReportPage() {
 
     const closeDrawer = () => {
         updateUrlParams({ campaignId: null, adsetId: null });
+    };
+
+    const handleExportDaily = async (formatType) => {
+        if (!selectedCampaign || isExportingDaily) return;
+        
+        try {
+            setIsExportingDaily(true);
+            const query = new URLSearchParams();
+            query.append('dateRange', dateRange);
+            if (kpi) query.append('kpi', kpi);
+
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+            const res = await fetch(`${apiUrl}/api/relatorio/${uuid}/campanha/${selectedCampaign.campaign_id}/daily?${query.toString()}`);
+            
+            if (!res.ok) throw new Error("Erro ao buscar dados diários.");
+            const { dailyData } = await res.json();
+
+            if (formatType === 'xlsx') {
+                exportDailyDataToXLSX(selectedCampaign.campaign_name, dailyData);
+            } else {
+                exportDailyDataToPDF(selectedCampaign.campaign_name, dailyData);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Não foi possível gerar a evolução diária no momento.");
+        } finally {
+            setIsExportingDaily(false);
+        }
+    };
+
+    const handleAdsExportPDF = () => {
+        if (!selectedAdSet) return;
+        const columns = [
+            { header: 'Anúncio', dataKey: 'nome_anuncio' },
+            { header: 'Status', dataKey: 'status' },
+            { header: 'Gasto', dataKey: 'spend', format: 'currency' },
+            { header: 'CPM', dataKey: 'cpm', format: 'currency' },
+            { header: 'CTR', dataKey: 'ctr', format: 'percentage' },
+            { header: 'Cliques', dataKey: 'clicks', format: 'number' },
+            { header: 'Leads', dataKey: 'conversoes', format: 'number' },
+            { header: 'CPA', dataKey: 'cpa', format: 'currency' },
+            { header: 'Freq.', dataKey: 'frequency' }
+        ];
+
+        const flatData = selectedAdSet.anuncios.map(ad => ({
+            nome_anuncio: ad.nome_anuncio,
+            status: ad.effective_status || ad.status,
+            spend: ad.metricas?.spend || 0,
+            cpm: ad.metricas?.cpm || 0,
+            ctr: ad.metricas?.ctr || 0,
+            clicks: ad.metricas?.clicks || 0,
+            conversoes: ad.metricas?.conversoes || 0,
+            cpa: ad.metricas?.cpa || 0,
+            frequency: Number(ad.metricas?.frequency || 0).toFixed(2)
+        }));
+
+        exportTableToPDF(`Anúncios - ${selectedAdSet.adset_name}`, columns, flatData);
     };
 
     if (loading) {
@@ -260,12 +330,46 @@ export default function ReportPage() {
                             <ArrowLeft size={16} className="text-slate-500 group-hover:text-slate-700 transition-colors" />
                             Voltar para Conjuntos
                         </button>
+                        
+                        <div className="ml-auto">
+                            <button
+                                onClick={handleAdsExportPDF}
+                                className="group flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-sm rounded-lg transition-all"
+                            >
+                                <Download size={16} /> Exportar Anúncios (PDF)
+                            </button>
+                        </div>
                     </div>
                 )}
 
                 {(!selectedAdSet && selectedCampaign) && (
                     // Nível 2: Lista de Conjuntos (A Batalha de Públicos)
                     <div className="animate-fadeIn">
+                        
+                        {/* Seção de Exportação da Campanha */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6 gap-4">
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-800">Evolução Diária da Campanha</h3>
+                                <p className="text-xs text-gray-500">Extraia a planilha completa com o detalhamento de métricas por dia desta campanha.</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => handleExportDaily('xlsx')}
+                                    disabled={isExportingDaily}
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 font-medium text-sm rounded-md transition-colors border border-green-200 disabled:opacity-50"
+                                >
+                                    <FileSpreadsheet size={16} /> {isExportingDaily ? 'Processando...' : 'Excel (XLSX)'}
+                                </button>
+                                <button
+                                    onClick={() => handleExportDaily('pdf')}
+                                    disabled={isExportingDaily}
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 font-medium text-sm rounded-md transition-colors border border-red-200 disabled:opacity-50"
+                                >
+                                    <FileText size={16} />  {isExportingDaily ? 'Processando...' : 'PDF'}
+                                </button>
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <DonutChart adsets={selectedCampaign.conjuntos} />
                             <CPAHorizontalBar adsets={selectedCampaign.conjuntos} />

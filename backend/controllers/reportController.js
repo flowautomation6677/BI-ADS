@@ -196,7 +196,48 @@ const createReport = async (req, res) => {
     }
 };
 
+const getCampaignDailyReport = async (req, res) => {
+    const { uuid, campaignId } = req.params;
+    const { startDate, endDate, dateRange } = req.query;
+
+    try {
+        const relatorio = await prisma.relatorio.findUnique({
+            where: { id_unico: uuid }
+        });
+
+        if (!relatorio) {
+            return res.status(404).json({ error: "Relatório não encontrado." });
+        }
+
+        const adAccountId = relatorio.ad_account_id_facebook;
+        const actId = `act_${adAccountId.replace('act_', '')}`;
+
+        let resolvedStartDate = startDate;
+        let resolvedEndDate = endDate;
+        let resolvedDateRange = dateRange;
+
+        if (dateRange?.includes(',')) {
+            const [customStart, customEnd] = dateRange.split(',');
+            resolvedStartDate = customStart;
+            resolvedEndDate = customEnd;
+            resolvedDateRange = undefined;
+        }
+
+        const filters = { startDate: resolvedStartDate, endDate: resolvedEndDate, dateRange: resolvedDateRange };
+
+        const dailyData = await facebookService.fetchCampaignDailyTrend(actId, campaignId, filters);
+
+        res.set('Cache-Control', 'public, max-age=300');
+        return res.json({ dailyData });
+
+    } catch (error) {
+        console.error(`Erro no getCampaignDailyReport:`, error.message);
+        return res.status(500).json({ error: "Erro ao buscar dados diários da campanha." });
+    }
+};
+
 module.exports = {
     getReport,
-    createReport
+    createReport,
+    getCampaignDailyReport
 };

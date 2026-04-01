@@ -360,7 +360,101 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
     }
 };
 
+/**
+ * Busca os dados diários para uma campanha específica (nível campaign)
+ */
+const fetchCampaignDailyTrend = async (adAccountId, campaignId, filters = {}) => {
+    if (!process.env.FB_ACCESS_TOKEN) return [];
+
+    const cacheKey = buildCacheKey(adAccountId, { ...filters, campaignId });
+    const cached = getFromCache(trendDataCache, cacheKey);
+    if (cached) {
+        console.log(`[Cache HIT] fetchCampaignDailyTrend para ${campaignId} (TTL 30min)`);
+        return cached;
+    }
+    console.log(`[Cache MISS] Buscando trendType diário para camp: ${campaignId}`);
+
+    const account = new AdAccount(adAccountId);
+
+    try {
+        let options = { 
+            level: 'campaign', 
+            time_increment: 1,
+            filtering: [{ field: 'campaign.id', operator: 'EQUAL', value: campaignId }]
+        };
+
+        if (filters.startDate && filters.endDate) {
+            options.time_range = { since: filters.startDate, until: filters.endDate };
+        } else if (filters.dateRange) {
+            options.date_preset = mapDateRangeToPreset(filters.dateRange);
+        } else {
+            options.date_preset = 'maximum';
+        }
+
+        const insights = await account.getInsights(
+            ['date_start', 'spend', 'clicks', 'inline_link_clicks', 'impressions', 'cpm', 'ctr', 'inline_link_click_ctr', 'actions', 'action_values'],
+            options
+        );
+
+        const result = insights.map(item => {
+            const data = item._data;
+            const spend = Number.parseFloat(data.spend) || 0;
+            const impressions = Number.parseInt(data.impressions, 10) || 0;
+            const clicks = Number.parseInt(data.inline_link_clicks, 10) || Number.parseInt(data.clicks, 10) || 0;
+            const cpm = Number.parseFloat(data.cpm) || 0;
+            const ctr = Number.parseFloat(data.inline_link_click_ctr) || Number.parseFloat(data.ctr) || 0;
+
+            let revenue = 0;
+            if (data.action_values) {
+                const purchaseValue = data.action_values.find(a => a.action_type === 'purchase');
+                if (purchaseValue) revenue = Number.parseFloat(purchaseValue.value) || 0;
+            }
+
+            let cpa = 0;
+            let conversoes = 0;
+            if (data.actions) {
+                const action = data.actions.find(a => a.action_type === 'purchase') ||
+                    data.actions.find(a => a.action_type === 'lead') ||
+                    data.actions.find(a => a.action_type === 'onsite_web_lead') ||
+                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_conversation_started_7d') ||
+                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_first_reply') ||
+                    data.actions.find(a => a.action_type === 'messages') ||
+                    data.actions.find(a => a.action_type === 'leadgen_grouped');
+
+                if (action && spend > 0) {
+                    conversoes = Number.parseInt(action.value, 10);
+                    if (conversoes > 0) {
+                        cpa = spend / conversoes;
+                    }
+                }
+            }
+
+            return {
+                date: data.date_start + 'T12:00:00.000Z',
+                spend,
+                impressions,
+                clicks,
+                cpm,
+                ctr,
+                revenue,
+                conversoes: Math.round(conversoes),
+                cpa,
+                reach: Number.parseInt(data.reach, 10) || 0, // reach pode não vir em insights diários com nível menor, mas se vier
+                roas: spend > 0 && revenue > 0 ? revenue / spend : 0,
+            };
+        });
+
+        setInCache(trendDataCache, cacheKey, result);
+        return result;
+
+    } catch (error) {
+        console.error("Erro na integração com Facebook API (Campaign Daily Trend):", error.message);
+        return [];
+    }
+};
+
 module.exports = {
     fetchAdData,
-    fetchAccountTrendData
+    fetchAccountTrendData,
+    fetchCampaignDailyTrend
 };

@@ -1,0 +1,131 @@
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
+export const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+/**
+ * Exporta dados de uma tabela genérica para um arquivo PDF
+ * @param {string} title Titulo do relatorio
+ * @param {Array} columns Ex: [{ header: 'Campanha', dataKey: 'campaign_name' }, ...]
+ * @param {Array} data Ex: [{ campaign_name: 'Camp. 1', spend: 'R$ 10,00', ... }]
+ */
+export const exportTableToPDF = (title, columns, data) => {
+    const doc = new jsPDF('landscape');
+    
+    // Configurações do cabeçalho
+    doc.setFontSize(18);
+    doc.text(title, 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, 14, 30);
+
+    const rows = data.map(item => {
+        return columns.map(col => {
+            let val = item[col.dataKey];
+            if (col.format === 'currency') val = formatBRL(val);
+            if (col.format === 'percentage') val = `${Number(val || 0).toFixed(2)}%`;
+            if (col.format === 'number') val = Number(val || 0).toLocaleString('pt-BR');
+            return val;
+        });
+    });
+
+    const head = [columns.map(col => col.header)];
+
+    doc.autoTable({
+        startY: 35,
+        head: head,
+        body: rows,
+        theme: 'grid',
+        headStyles: { fillColor: [59, 130, 246] }, // Tailwind blue-500
+        styles: { fontSize: 8, cellPadding: 3 },
+    });
+
+    doc.save(`${title.toLowerCase().replaceAll(' ', '_')}_${format(new Date(), 'yyyyMMdd')}.pdf`);
+};
+
+/**
+ * Transforma e exporta os dados diários recebidos da API para XLSX.
+ * @param {string} campaignName Nome da campanha
+ * @param {Array} dailyData Dados diários do endpoint `/daily`
+ */
+export const exportDailyDataToXLSX = (campaignName, dailyData) => {
+    if (!dailyData?.length) return;
+
+    // Converte / Mapeia e formata os objetos
+    const mappedData = dailyData.map(d => ({
+        'Data': format(new Date(d.date), 'dd/MM/yyyy'),
+        'Gasto (R$)': d.spend,
+        'Impressões': d.impressions,
+        'Alcance': d.reach,
+        'Cliques': d.clicks,
+        'CTR (%)': Number(d.ctr).toFixed(2),
+        'CPM (R$)': d.cpm,
+        'Leads': d.conversoes,
+        'CPA (R$)': d.cpa,
+        'Receita (R$)': d.revenue,
+        'ROAS': Number(d.roas).toFixed(2)
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(mappedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Evolução Diária');
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const dataBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+    
+    const fileName = `Evolucao_Diaria_${campaignName.replaceAll(' ', '_')}_${format(new Date(), 'yyyyMMdd')}.xlsx`;
+    saveAs(dataBlob, fileName);
+};
+
+/**
+ * Transforma e exporta os dados diários recebidos da API para PDF.
+ * @param {string} campaignName Nome da campanha
+ * @param {Array} dailyData Dados diários do endpoint `/daily`
+ */
+export const exportDailyDataToPDF = (campaignName, dailyData) => {
+    if (!dailyData?.length) return;
+
+    const doc = new jsPDF('landscape');
+    
+    doc.setFontSize(16);
+    doc.text(`Evolução Diária: ${campaignName}`, 14, 22);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, 14, 30);
+
+    const columns = [
+        "Data", "Gasto", "Impressões", "Alcance", "Cliques", "CTR", "CPM", "Leads", "CPA", "Receita", "ROAS"
+    ];
+
+    const rows = dailyData.map(d => [
+        format(new Date(d.date), 'dd/MM/yyyy'),
+        formatBRL(d.spend),
+        d.impressions?.toLocaleString('pt-BR'),
+        d.reach?.toLocaleString('pt-BR'),
+        d.clicks?.toLocaleString('pt-BR'),
+        `${Number(d.ctr).toFixed(2)}%`,
+        formatBRL(d.cpm),
+        d.conversoes,
+        formatBRL(d.cpa),
+        formatBRL(d.revenue),
+        `${Number(d.roas).toFixed(2)}x`
+    ]);
+
+    doc.autoTable({
+        startY: 35,
+        head: [columns],
+        body: rows,
+        theme: 'grid',
+        headStyles: { fillColor: [59, 130, 246] },
+        styles: { fontSize: 8, cellPadding: 3, halign: 'center' },
+        columnStyles: { 0: { halign: 'left' } }
+    });
+
+    const fileName = `Evolucao_Diaria_${campaignName.replaceAll(' ', '_')}_${format(new Date(), 'yyyyMMdd')}.pdf`;
+    doc.save(fileName);
+};

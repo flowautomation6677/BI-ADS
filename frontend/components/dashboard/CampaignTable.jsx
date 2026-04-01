@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import {
     createColumnHelper,
     flexRender,
-    getCoreRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown, Download } from 'lucide-react';
+import { exportTableToPDF } from '@/utils/exportUtils';
 
 const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
@@ -148,8 +148,50 @@ export default function CampaignTable({ data, onRowClick }) {
         getSortedRowModel: getSortedRowModel(),
     });
 
+    const handleExportPDF = () => {
+        const columns = [
+            { header: 'Campanha', dataKey: 'campaign_name' },
+            { header: 'Status', dataKey: 'status' },
+            { header: 'Gasto', dataKey: 'spend', format: 'currency' },
+            { header: 'Alcance', dataKey: 'reach', format: 'number' },
+            { header: 'Impressões', dataKey: 'impressions', format: 'number' },
+            { header: 'CPM', dataKey: 'cpm', format: 'currency' },
+            { header: 'CTR', dataKey: 'ctr', format: 'percentage' },
+            { header: 'Cliques', dataKey: 'clicks', format: 'number' },
+            { header: 'Leads', dataKey: 'conversoes', format: 'number' },
+            { header: 'CPA', dataKey: 'cpa', format: 'currency' },
+            { header: 'ROAS', dataKey: 'roas' }
+        ];
+
+        // Mapear os dados para um formato plano
+        const flatData = (data || []).map(row => ({
+            campaign_name: row.campaign_name,
+            status: row.status,
+            spend: row.metricas?.spend || 0,
+            reach: row.metricas?.reach || 0,
+            impressions: row.metricas?.impressions || 0,
+            cpm: row.metricas?.cpm || 0,
+            ctr: row.metricas?.ctr || 0,
+            clicks: row.metricas?.clicks || 0,
+            conversoes: row.metricas?.conversoes || 0,
+            cpa: row.metricas?.cpa || 0,
+            roas: Number(row.metricas?.roas || 0).toFixed(2) + 'x'
+        }));
+
+        exportTableToPDF('Relatório de Campanhas', columns, flatData);
+    };
+
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden w-full">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
+                <h3 className="text-lg font-bold text-gray-800">Campanhas Ativas</h3>
+                <button
+                    onClick={handleExportPDF}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-semibold"
+                >
+                    <Download size={16} /> Exportar PDF
+                </button>
+            </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
