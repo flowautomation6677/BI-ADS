@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {
     createColumnHelper,
     flexRender,
+    getCoreRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
