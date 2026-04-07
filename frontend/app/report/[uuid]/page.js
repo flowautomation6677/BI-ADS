@@ -14,7 +14,7 @@ import DonutChart from "@/components/dashboard/DonutChart";
 import CPAHorizontalBar from "@/components/dashboard/CPAHorizontalBar";
 import ABViewerModal from "@/components/dashboard/ABViewerModal";
 import { ArrowLeft, Download, FileSpreadsheet, FileText } from "lucide-react";
-import { exportDailyDataToXLSX, exportDailyDataToPDF, exportTableToPDF } from "@/utils/exportUtils";
+import { exportDailyDataToXLSX, exportDailyDataToPDF, exportTableToPDF, exportAllCampaignsDailyToXLSX } from "@/utils/exportUtils";
 
 export default function ReportPage() {
     const params = useParams();
@@ -32,6 +32,7 @@ export default function ReportPage() {
     
     // Export State
     const [isExportingDaily, setIsExportingDaily] = useState(false);
+    const [isExportingCampaignsXLSX, setIsExportingCampaignsXLSX] = useState(false);
 
     const handleSelectForAB = (ad) => {
         setAbSelectedAds(prev => {
@@ -188,6 +189,42 @@ export default function ReportPage() {
         }
     };
 
+    // Exporta dados diários de TODAS as campanhas como XLSX (uma aba por campanha)
+    const handleExportCampaignsXLSX = async () => {
+        if (!data?.campanhas?.length || isExportingCampaignsXLSX) return;
+
+        try {
+            setIsExportingCampaignsXLSX(true);
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+            const query = new URLSearchParams();
+            query.append('dateRange', dateRange);
+
+            // Fetch daily data for every campaign in parallel
+            const results = await Promise.all(
+                data.campanhas.map(async (campaign) => {
+                    try {
+                        const res = await fetch(
+                            `${apiUrl}/api/relatorio/${uuid}/campanha/${campaign.campaign_id}/daily?${query.toString()}`
+                        );
+                        if (!res.ok) return null;
+                        const { dailyData } = await res.json();
+                        return { campaignName: campaign.campaign_name, dailyData };
+                    } catch {
+                        return null;
+                    }
+                })
+            );
+
+            const validResults = results.filter(Boolean);
+            await exportAllCampaignsDailyToXLSX(data.cliente, validResults);
+        } catch (err) {
+            console.error(err);
+            alert('Não foi possível exportar a planilha no momento.');
+        } finally {
+            setIsExportingCampaignsXLSX(false);
+        }
+    };
+
     const handleAdsExportPDF = () => {
         if (!selectedAdSet) return;
         const columns = [
@@ -303,6 +340,8 @@ export default function ReportPage() {
                         <CampaignTable
                             data={data.campanhas}
                             onRowClick={handleCampaignClick}
+                            onExportXLSX={handleExportCampaignsXLSX}
+                            isExportingXLSX={isExportingCampaignsXLSX}
                         />
                     </div>
                 </div>

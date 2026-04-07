@@ -8,12 +8,12 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ArrowUp, ArrowDown, Download } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { exportTableToPDF } from '@/utils/exportUtils';
 
 const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
-export default function CampaignTable({ data, onRowClick }) {
+export default function CampaignTable({ data, onRowClick, onExportXLSX, isExportingXLSX }) {
     const [sorting, setSorting] = useState([{ id: 'spend', desc: true }]);
 
     const columnHelper = createColumnHelper();
@@ -186,12 +186,26 @@ export default function CampaignTable({ data, onRowClick }) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden w-full">
             <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
                 <h3 className="text-lg font-bold text-gray-800">Campanhas Ativas</h3>
-                <button
-                    onClick={handleExportPDF}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-semibold"
-                >
-                    <Download size={16} /> Exportar PDF
-                </button>
+                <div className="flex items-center gap-2">
+                    {onExportXLSX && (
+                        <button
+                            onClick={onExportXLSX}
+                            disabled={isExportingXLSX}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-semibold border border-emerald-200 disabled:opacity-50"
+                        >
+                            {isExportingXLSX
+                                ? <Loader2 size={16} className="animate-spin" />
+                                : <FileSpreadsheet size={16} />}
+                            {isExportingXLSX ? 'Exportando...' : 'Exportar XLSX'}
+                        </button>
+                    )}
+                    <button
+                        onClick={handleExportPDF}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-semibold"
+                    >
+                        <Download size={16} /> Exportar PDF
+                    </button>
+                </div>
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -251,4 +265,6 @@ export default function CampaignTable({ data, onRowClick }) {
 CampaignTable.propTypes = {
     data: PropTypes.array.isRequired,
     onRowClick: PropTypes.func,
+    onExportXLSX: PropTypes.func,
+    isExportingXLSX: PropTypes.bool,
 };

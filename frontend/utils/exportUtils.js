@@ -49,6 +49,63 @@ export const exportTableToPDF = async (title, columns, data) => {
 };
 
 /**
+ * Exporta dados diários de MÚLTIPLAS campanhas em um único XLSX (uma aba por campanha).
+ * @param {string} clientName Nome do cliente / relatório
+ * @param {Array<{ campaignName: string, dailyData: Array }>} campaigns
+ */
+export const exportAllCampaignsDailyToXLSX = async (clientName, campaigns) => {
+    if (!campaigns?.length) return;
+
+    const XLSX = await import('xlsx');
+    const { saveAs } = await import('file-saver');
+    const { format } = await import('date-fns');
+
+    const workbook = XLSX.utils.book_new();
+
+    for (const { campaignName, dailyData } of campaigns) {
+        if (!dailyData?.length) continue;
+
+        const mappedData = dailyData.map(d => ({
+            'Data': format(new Date(d.date + 'T12:00:00Z'), 'dd/MM/yyyy'),
+            'Gasto (R$)': d.spend,
+            'Impressões': d.impressions,
+            'Alcance': d.reach,
+            'Cliques': d.clicks,
+            'CTR (%)': Number(d.ctr).toFixed(2),
+            'CPM (R$)': d.cpm,
+            'Leads': d.conversoes,
+            'CPA (R$)': d.cpa,
+            'Receita (R$)': d.revenue,
+            'ROAS': Number(d.roas).toFixed(2),
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(mappedData);
+
+        // Apply column widths for readability
+        worksheet['!cols'] = [
+            { wch: 12 }, { wch: 13 }, { wch: 13 }, { wch: 10 },
+            { wch: 10 }, { wch: 9 }, { wch: 11 }, { wch: 8 },
+            { wch: 11 }, { wch: 13 }, { wch: 8 },
+        ];
+
+        // Excel sheet names max 31 chars, no special chars
+        const sheetName = campaignName
+            .replaceAll(/[\\/?*[\]:]/g, '')
+            .slice(0, 31);
+
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    }
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const dataBlob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
+    });
+
+    const safeClient = clientName.replaceAll(' ', '_');
+    saveAs(dataBlob, `Campanhas_Diario_${safeClient}_${format(new Date(), 'yyyyMMdd')}.xlsx`);
+};
+
+/**
  * Transforma e exporta os dados diários recebidos da API para XLSX.
  * @param {string} campaignName Nome da campanha
  * @param {Array} dailyData Dados diários do endpoint `/daily`

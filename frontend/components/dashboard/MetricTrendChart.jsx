@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
     AreaChart,
     Area,
@@ -13,11 +14,11 @@ import { TrendingUp } from 'lucide-react';
 const AVAILABLE_METRICS = {
     cpa: { key: 'cpa', name: 'CPA', color: '#EF4444', format: (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v) },
     spend: { key: 'spend', name: 'Gasto', color: '#3B82F6', format: (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v) },
-    roas: { key: 'roas', name: 'ROAS', color: '#8B5CF6', format: (v) => parseFloat(v).toFixed(2) },
-    conversoes: { key: 'conversoes', name: 'Conversões', color: '#10B981', format: (v) => parseFloat(v).toFixed(0) },
+    roas: { key: 'roas', name: 'ROAS', color: '#8B5CF6', format: (v) => Number.parseFloat(v).toFixed(2) },
+    conversoes: { key: 'conversoes', name: 'Conversões', color: '#10B981', format: (v) => Number.parseFloat(v).toFixed(0) },
     revenue: { key: 'revenue', name: 'Receita', color: '#059669', format: (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v) },
     cpm: { key: 'cpm', name: 'CPM', color: '#F59E0B', format: (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v) },
-    ctr: { key: 'ctr', name: 'CTR', color: '#0EA5E9', format: (v) => `${parseFloat(v).toFixed(2)}%` },
+    ctr: { key: 'ctr', name: 'CTR', color: '#0EA5E9', format: (v) => `${Number.parseFloat(v).toFixed(2)}%` },
     impressions: { key: 'impressions', name: 'Impressões', color: '#6366F1', format: (v) => new Intl.NumberFormat('pt-BR', { notation: 'compact' }).format(v) },
     clicks: { key: 'clicks', name: 'Cliques', color: '#EC4899', format: (v) => new Intl.NumberFormat('pt-BR', { notation: 'compact' }).format(v) },
 };
@@ -32,6 +33,23 @@ const CustomTooltip = ({ active, payload, label, config }) => {
             </p>
         </div>
     );
+};
+
+CustomTooltip.propTypes = {
+    active: PropTypes.bool,
+    label: PropTypes.string,
+    payload: PropTypes.arrayOf(
+        PropTypes.shape({ value: PropTypes.number })
+    ),
+    config: PropTypes.shape({
+        color: PropTypes.string,
+        name: PropTypes.string,
+        format: PropTypes.func,
+    }),
+};
+
+MetricTrendChart.propTypes = {
+    data: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default function MetricTrendChart({ data }) {
