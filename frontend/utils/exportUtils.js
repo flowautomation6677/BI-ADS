@@ -2,11 +2,12 @@
 
 export const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
-// Parses any date string safely — avoids Invalid Date when the string already has timezone info
-const safeFormatDate = (dateStr, fmt, formatFn) => {
+// Parses any date string safely — handles plain dates AND full ISO strings
+const safeFormatDate = (dateStr) => {
     try {
         const dt = new Date(dateStr);
-        return isNaN(dt.getTime()) ? String(dateStr) : formatFn(dt, fmt);
+        if (Number.isNaN(dt.getTime())) return String(dateStr);
+        return dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
         return String(dateStr);
     }
@@ -74,9 +75,9 @@ export const exportAllCampaignsDailyToXLSX = async (clientName, campaigns) => {
 
     for (const { campaignName, dailyData } of campaigns) {
         if (!dailyData?.length) continue;
-
+        try {
         const mappedData = dailyData.map(d => ({
-            'Data': safeFormatDate(d.date, 'dd/MM/yyyy', format),
+            'Data': safeFormatDate(d.date),
             'Gasto (R$)': d.spend,
             'Impressões': d.impressions,
             'Alcance': d.reach,
@@ -98,6 +99,14 @@ export const exportAllCampaignsDailyToXLSX = async (clientName, campaigns) => {
         ];
 
         XLSX.utils.book_append_sheet(workbook, worksheet, toSafeSheetName(campaignName));
+        } catch (err) {
+            console.error(`[XLSX] Falha ao processar campanha "${campaignName}":`, err);
+        }
+    }
+
+    if (workbook.SheetNames.length === 0) {
+        console.warn('[XLSX] Nenhuma aba gerada — nenhum dado diário disponível.');
+        return;
     }
 
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -122,7 +131,7 @@ export const exportDailyDataToXLSX = async (campaignName, dailyData) => {
     const { format } = await import('date-fns');
 
     const mappedData = dailyData.map(d => ({
-        'Data': safeFormatDate(d.date, 'dd/MM/yyyy', format),
+        'Data': safeFormatDate(d.date),
         'Gasto (R$)': d.spend,
         'Impressões': d.impressions,
         'Alcance': d.reach,
@@ -171,7 +180,7 @@ export const exportDailyDataToPDF = async (campaignName, dailyData) => {
     const headers = ['Data', 'Gasto', 'Impressões', 'Alcance', 'Cliques', 'CTR', 'CPM', 'Leads', 'CPA', 'Receita', 'ROAS'];
 
     const rows = dailyData.map(d => [
-        safeFormatDate(d.date, 'dd/MM/yyyy', format),
+        safeFormatDate(d.date),
         formatBRL(d.spend),
         d.impressions?.toLocaleString('pt-BR'),
         d.reach?.toLocaleString('pt-BR'),
