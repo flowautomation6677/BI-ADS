@@ -8,12 +8,12 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ArrowUp, ArrowDown, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
-import { exportTableToPDF } from '@/utils/exportUtils';
+import { ArrowUpDown, ArrowUp, ArrowDown, Download, FileSpreadsheet } from 'lucide-react';
+import { exportTableToPDF, exportTableToXLSX } from '@/utils/exportUtils';
 
 const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
-export default function CampaignTable({ data, onRowClick, onExportXLSX, isExportingXLSX }) {
+export default function CampaignTable({ data, onRowClick }) {
     const [sorting, setSorting] = useState([{ id: 'spend', desc: true }]);
 
     const columnHelper = createColumnHelper();
@@ -149,23 +149,8 @@ export default function CampaignTable({ data, onRowClick, onExportXLSX, isExport
         getSortedRowModel: getSortedRowModel(),
     });
 
-    const handleExportPDF = () => {
-        const columns = [
-            { header: 'Campanha', dataKey: 'campaign_name' },
-            { header: 'Status', dataKey: 'status' },
-            { header: 'Gasto', dataKey: 'spend', format: 'currency' },
-            { header: 'Alcance', dataKey: 'reach', format: 'number' },
-            { header: 'Impressões', dataKey: 'impressions', format: 'number' },
-            { header: 'CPM', dataKey: 'cpm', format: 'currency' },
-            { header: 'CTR', dataKey: 'ctr', format: 'percentage' },
-            { header: 'Cliques', dataKey: 'clicks', format: 'number' },
-            { header: 'Leads', dataKey: 'conversoes', format: 'number' },
-            { header: 'CPA', dataKey: 'cpa', format: 'currency' },
-            { header: 'ROAS', dataKey: 'roas' }
-        ];
-
-        // Mapear os dados para um formato plano
-        const flatData = (data || []).map(row => ({
+    const getFlatData = () => {
+        return (data || []).map(row => ({
             campaign_name: row.campaign_name,
             status: row.status,
             spend: row.metricas?.spend || 0,
@@ -178,8 +163,28 @@ export default function CampaignTable({ data, onRowClick, onExportXLSX, isExport
             cpa: row.metricas?.cpa || 0,
             roas: Number(row.metricas?.roas || 0).toFixed(2) + 'x'
         }));
+    };
 
-        exportTableToPDF('Relatório de Campanhas', columns, flatData);
+    const getColumns = () => [
+        { header: 'Campanha', dataKey: 'campaign_name' },
+        { header: 'Status', dataKey: 'status' },
+        { header: 'Gasto', dataKey: 'spend', format: 'currency' },
+        { header: 'Alcance', dataKey: 'reach', format: 'number' },
+        { header: 'Impressões', dataKey: 'impressions', format: 'number' },
+        { header: 'CPM', dataKey: 'cpm', format: 'currency' },
+        { header: 'CTR', dataKey: 'ctr', format: 'percentage' },
+        { header: 'Cliques', dataKey: 'clicks', format: 'number' },
+        { header: 'Leads', dataKey: 'conversoes', format: 'number' },
+        { header: 'CPA', dataKey: 'cpa', format: 'currency' },
+        { header: 'ROAS', dataKey: 'roas' }
+    ];
+
+    const handleExportPDF = () => {
+        exportTableToPDF('Relatório de Campanhas', getColumns(), getFlatData());
+    };
+
+    const handleExportXLSX = () => {
+        exportTableToXLSX('Relatório de Campanhas', getColumns(), getFlatData());
     };
 
     return (
@@ -187,18 +192,12 @@ export default function CampaignTable({ data, onRowClick, onExportXLSX, isExport
             <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
                 <h3 className="text-lg font-bold text-gray-800">Campanhas Ativas</h3>
                 <div className="flex items-center gap-2">
-                    {onExportXLSX && (
-                        <button
-                            onClick={onExportXLSX}
-                            disabled={isExportingXLSX}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-semibold border border-emerald-200 disabled:opacity-50"
-                        >
-                            {isExportingXLSX
-                                ? <Loader2 size={16} className="animate-spin" />
-                                : <FileSpreadsheet size={16} />}
-                            {isExportingXLSX ? 'Exportando...' : 'Exportar XLSX'}
-                        </button>
-                    )}
+                    <button
+                        onClick={handleExportXLSX}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-semibold border border-emerald-200"
+                    >
+                        <FileSpreadsheet size={16} /> Exportar XLSX
+                    </button>
                     <button
                         onClick={handleExportPDF}
                         className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-semibold"
@@ -265,6 +264,4 @@ export default function CampaignTable({ data, onRowClick, onExportXLSX, isExport
 CampaignTable.propTypes = {
     data: PropTypes.array.isRequired,
     onRowClick: PropTypes.func,
-    onExportXLSX: PropTypes.func,
-    isExportingXLSX: PropTypes.bool,
 };
