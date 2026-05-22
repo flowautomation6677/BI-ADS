@@ -60,6 +60,39 @@ export const exportTableToPDF = async (title, columns, data) => {
 };
 
 /**
+ * Exporta uma tabela plana para XLSX (Excel).
+ * @param {string} title Titulo do documento e da planilha
+ * @param {Array} columns Ex: [{ header: 'Campanha', dataKey: 'campaign_name' }, ...]
+ * @param {Array} data Dados formatados de forma plana
+ */
+export const exportTableToXLSX = async (title, columns, data) => {
+    if (!data?.length) return;
+
+    const XLSX = await import('xlsx');
+    const { saveAs } = await import('file-saver');
+    const { format } = await import('date-fns');
+
+    // Mapear os dados usando as colunas para que o Excel tenha os cabeçalhos corretos e na ordem correta
+    const mappedData = data.map(row => {
+        const newRow = {};
+        columns.forEach(col => {
+            newRow[col.header] = row[col.dataKey] ?? '';
+        });
+        return newRow;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(mappedData);
+    const workbook = XLSX.utils.book_new();
+    
+    // Nome da aba até 31 caracteres
+    const safeSheetName = title.substring(0, 31).replaceAll(' ', '_');
+    XLSX.utils.book_append_sheet(workbook, worksheet, safeSheetName);
+
+    const safeTitle = title.toLowerCase().replaceAll(' ', '_');
+    saveAs(workbook, `${safeTitle}_${format(new Date(), 'yyyyMMdd')}.xlsx`);
+};
+
+/**
  * Exporta dados diários de MÚLTIPLAS campanhas em um único XLSX (uma aba por campanha).
  * @param {string} clientName Nome do cliente / relatório
  * @param {Array<{ campaignName: string, dailyData: Array }>} campaigns
