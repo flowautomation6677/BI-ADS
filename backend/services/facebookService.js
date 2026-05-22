@@ -383,15 +383,14 @@ const fetchCampaignDailyTrend = async (adAccountId, campaignId, filters = {}) =>
     const account = new AdAccount(adAccountId);
 
     try {
-        let options = { 
-            level: filters.adsetId ? 'adset' : 'campaign', 
-            time_increment: 1,
-            filtering: [{ field: 'campaign.id', operator: 'EQUAL', value: campaignId }]
-        };
-
+        let targetObj;
         if (filters.adsetId) {
-            options.filtering.push({ field: 'adset.id', operator: 'EQUAL', value: filters.adsetId });
+            targetObj = new bizSdk.AdSet(filters.adsetId);
+        } else {
+            targetObj = new bizSdk.Campaign(campaignId);
         }
+
+        let options = { time_increment: 1 };
 
         if (filters.startDate && filters.endDate) {
             options.time_range = { since: filters.startDate, until: filters.endDate };
@@ -401,8 +400,8 @@ const fetchCampaignDailyTrend = async (adAccountId, campaignId, filters = {}) =>
             options.date_preset = 'maximum';
         }
 
-        const insights = await account.getInsights(
-            ['date_start', 'spend', 'clicks', 'inline_link_clicks', 'impressions', 'cpm', 'ctr', 'inline_link_click_ctr', 'actions', 'action_values'],
+        const insights = await targetObj.getInsights(
+            ['date_start', 'spend', 'clicks', 'inline_link_clicks', 'impressions', 'cpm', 'ctr', 'inline_link_click_ctr', 'actions', 'action_values', 'reach'],
             options
         );
 
