@@ -16,7 +16,7 @@ const adDataCache = new Map();
 const trendDataCache = new Map();
 
 const buildCacheKey = (adAccountId, filters) =>
-    `${adAccountId}::${filters.dateRange || ''}::${filters.startDate || ''}::${filters.endDate || ''}::${filters.status || ''}`;
+    `${adAccountId}::${filters.dateRange || ''}::${filters.startDate || ''}::${filters.endDate || ''}::${filters.status || ''}::${filters.campaignId || ''}::${filters.adsetId || ''}`;
 
 const getFromCache = (cache, key) => {
     const entry = cache.get(key);
