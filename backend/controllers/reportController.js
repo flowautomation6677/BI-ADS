@@ -68,8 +68,8 @@ const getReport = async (req, res) => {
             overview.impressions += ad.metricas.impressions || 0;
             overview.reach += ad.metricas.reach || 0;
             if (ad.metricas.roas > 0) { roasSum += ad.metricas.roas; roasCount++; }
-            if (ad.metricas.cpa > 0 && ad.metricas.spend > 0) {
-                overview.conversoes += (ad.metricas.spend / ad.metricas.cpa);
+            if (ad.metricas.conversoes > 0) {
+                overview.conversoes += ad.metricas.conversoes;
             }
 
             const cId = ad.campaign_id || 'sem_campanha';
@@ -100,7 +100,7 @@ const getReport = async (req, res) => {
             campaignMap[cId].metricas.impressions += ad.metricas.impressions || 0;
             campaignMap[cId].metricas.reach += ad.metricas.reach || 0;
             if (ad.metricas.roas > 0) { campaignMap[cId].metricas.roasSum += ad.metricas.roas; campaignMap[cId].metricas.roasCount++; }
-            if (ad.metricas.cpa > 0) campaignMap[cId].metricas.conversoes += (ad.metricas.spend / ad.metricas.cpa);
+            if (ad.metricas.conversoes > 0) campaignMap[cId].metricas.conversoes += ad.metricas.conversoes;
 
             // Soma Conjunto
             campaignMap[cId].conjuntos[aId].metricas.spend += ad.metricas.spend;
@@ -109,7 +109,7 @@ const getReport = async (req, res) => {
             campaignMap[cId].conjuntos[aId].metricas.reach += ad.metricas.reach || 0;
             campaignMap[cId].conjuntos[aId].metricas.totalAds += 1;
             if (ad.metricas.roas > 0) { campaignMap[cId].conjuntos[aId].metricas.roasSum += ad.metricas.roas; campaignMap[cId].conjuntos[aId].metricas.roasCount++; }
-            if (ad.metricas.cpa > 0) campaignMap[cId].conjuntos[aId].metricas.conversoes += (ad.metricas.spend / ad.metricas.cpa);
+            if (ad.metricas.conversoes > 0) campaignMap[cId].conjuntos[aId].metricas.conversoes += ad.metricas.conversoes;
 
             // Adiciona anuncio
             campaignMap[cId].conjuntos[aId].anuncios.push(ad);
@@ -198,7 +198,7 @@ const createReport = async (req, res) => {
 
 const getCampaignDailyReport = async (req, res) => {
     const { uuid, campaignId } = req.params;
-    const { startDate, endDate, dateRange } = req.query;
+    const { startDate, endDate, dateRange, adsetId } = req.query;
 
     try {
         const relatorio = await prisma.relatorio.findUnique({
@@ -223,7 +223,7 @@ const getCampaignDailyReport = async (req, res) => {
             resolvedDateRange = undefined;
         }
 
-        const filters = { startDate: resolvedStartDate, endDate: resolvedEndDate, dateRange: resolvedDateRange };
+        const filters = { startDate: resolvedStartDate, endDate: resolvedEndDate, dateRange: resolvedDateRange, adsetId };
 
         const dailyData = await facebookService.fetchCampaignDailyTrend(actId, campaignId, filters);
 

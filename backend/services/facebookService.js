@@ -78,38 +78,54 @@ const calculateVideoMetrics = (insight, impressions) => {
     return { hook_rate, hold_rate, views25pct, views50pct, views75pct, views95pct, views100pct };
 };
 
+const extractConversions = (actions) => {
+    if (!actions || !Array.isArray(actions)) return 0;
+
+    const getVal = (type) => {
+        const a = actions.find(x => x.action_type === type);
+        return a ? Number.parseInt(a.value, 10) : 0;
+    };
+
+    const purchases = getVal('purchase');
+    if (purchases > 0) return purchases;
+
+    // sum leads (pixel leads + lead forms)
+    const leads = getVal('lead') + getVal('onsite_web_lead');
+    if (leads > 0) return leads;
+
+    // sum messages
+    const msgs = getVal('onsite_conversion.messaging_conversation_started_7d') + 
+                 getVal('onsite_conversion.messaging_first_reply') + 
+                 getVal('messages');
+    if (msgs > 0) return msgs;
+
+    const leadgen = getVal('leadgen_grouped');
+    if (leadgen > 0) return leadgen;
+
+    return 0;
+};
+
 const extractActionMetrics = (insight, spend) => {
     let roas = 0;
     let cpa = 0;
+    let conversoes = 0;
 
     if (insight.purchase_roas?.length > 0) {
         roas = Number.parseFloat(insight.purchase_roas[0].value) || 0;
     }
 
     if (insight.actions) {
-        const action = insight.actions.find(a =>
-            a.action_type === 'purchase' ||
-            a.action_type === 'lead' ||
-            a.action_type === 'onsite_web_lead' ||
-            a.action_type === 'onsite_conversion.messaging_conversation_started_7d' ||
-            a.action_type === 'onsite_conversion.messaging_first_reply' ||
-            a.action_type === 'messages' ||
-            a.action_type === 'leadgen_grouped'
-        );
-
-        if (action && spend > 0) {
-            const conversions = Number.parseInt(action.value, 10);
-            if (conversions > 0) {
-                cpa = spend / conversions;
-            }
+        conversoes = extractConversions(insight.actions);
+        if (conversoes > 0 && spend > 0) {
+            cpa = spend / conversoes;
         }
     }
 
-    return { roas, cpa };
+    return { roas, cpa, conversoes };
 };
 
 const formatMetrics = (adJson) => {
-    const defaultMetrics = { spend: 0, cpc: 0, ctr: 0, clicks: 0, roas: 0, cpa: 0, cpm: 0, frequency: 0, impressions: 0, reach: 0, hook_rate: 0, hold_rate: 0, views25pct: 0, views50pct: 0, views75pct: 0, views95pct: 0, views100pct: 0, fatigue: false };
+    const defaultMetrics = { spend: 0, cpc: 0, ctr: 0, clicks: 0, roas: 0, cpa: 0, conversoes: 0, cpm: 0, frequency: 0, impressions: 0, reach: 0, hook_rate: 0, hold_rate: 0, views25pct: 0, views50pct: 0, views75pct: 0, views95pct: 0, views100pct: 0, fatigue: false };
 
     if (!adJson.insights?.data?.length) {
         return defaultMetrics;
@@ -320,19 +336,9 @@ const fetchAccountTrendData = async (adAccountId, filters = {}) => {
             let cpa = 0;
             let conversoes = 0;
             if (data.actions) {
-                const action = data.actions.find(a => a.action_type === 'purchase') ||
-                    data.actions.find(a => a.action_type === 'lead') ||
-                    data.actions.find(a => a.action_type === 'onsite_web_lead') ||
-                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_conversation_started_7d') ||
-                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_first_reply') ||
-                    data.actions.find(a => a.action_type === 'messages') ||
-                    data.actions.find(a => a.action_type === 'leadgen_grouped');
-
-                if (action && spend > 0) {
-                    conversoes = Number.parseInt(action.value, 10);
-                    if (conversoes > 0) {
-                        cpa = spend / conversoes;
-                    }
+                conversoes = extractConversions(data.actions);
+                if (conversoes > 0 && spend > 0) {
+                    cpa = spend / conversoes;
                 }
             }
 
@@ -378,10 +384,14 @@ const fetchCampaignDailyTrend = async (adAccountId, campaignId, filters = {}) =>
 
     try {
         let options = { 
-            level: 'campaign', 
+            level: filters.adsetId ? 'adset' : 'campaign', 
             time_increment: 1,
             filtering: [{ field: 'campaign.id', operator: 'EQUAL', value: campaignId }]
         };
+
+        if (filters.adsetId) {
+            options.filtering.push({ field: 'adset.id', operator: 'EQUAL', value: filters.adsetId });
+        }
 
         if (filters.startDate && filters.endDate) {
             options.time_range = { since: filters.startDate, until: filters.endDate };
@@ -413,19 +423,9 @@ const fetchCampaignDailyTrend = async (adAccountId, campaignId, filters = {}) =>
             let cpa = 0;
             let conversoes = 0;
             if (data.actions) {
-                const action = data.actions.find(a => a.action_type === 'purchase') ||
-                    data.actions.find(a => a.action_type === 'lead') ||
-                    data.actions.find(a => a.action_type === 'onsite_web_lead') ||
-                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_conversation_started_7d') ||
-                    data.actions.find(a => a.action_type === 'onsite_conversion.messaging_first_reply') ||
-                    data.actions.find(a => a.action_type === 'messages') ||
-                    data.actions.find(a => a.action_type === 'leadgen_grouped');
-
-                if (action && spend > 0) {
-                    conversoes = Number.parseInt(action.value, 10);
-                    if (conversoes > 0) {
-                        cpa = spend / conversoes;
-                    }
+                conversoes = extractConversions(data.actions);
+                if (conversoes > 0 && spend > 0) {
+                    cpa = spend / conversoes;
                 }
             }
 

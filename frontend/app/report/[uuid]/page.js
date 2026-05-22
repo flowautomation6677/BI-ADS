@@ -169,6 +169,7 @@ export default function ReportPage() {
             const query = new URLSearchParams();
             query.append('dateRange', dateRange);
             if (kpi) query.append('kpi', kpi);
+            if (selectedAdSet) query.append('adsetId', selectedAdSet.adset_id);
 
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
             const res = await fetch(`${apiUrl}/api/relatorio/${uuid}/campanha/${selectedCampaign.campaign_id}/daily?${query.toString()}`);
@@ -176,10 +177,12 @@ export default function ReportPage() {
             if (!res.ok) throw new Error("Erro ao buscar dados diários.");
             const { dailyData } = await res.json();
 
+            const exportName = selectedAdSet ? selectedAdSet.adset_name : selectedCampaign.campaign_name;
+
             if (formatType === 'xlsx') {
-                exportDailyDataToXLSX(selectedCampaign.campaign_name, dailyData);
+                exportDailyDataToXLSX(exportName, dailyData);
             } else {
-                exportDailyDataToPDF(selectedCampaign.campaign_name, dailyData);
+                exportDailyDataToPDF(exportName, dailyData);
             }
         } catch (err) {
             console.error(err);
